@@ -16,7 +16,7 @@ public class Main {
 
 	/**
 	 * Calculate an expression.
-	 * @input exp an expression
+	 * @param exp an expression
 	 * @return the result of the expression if it's legal; otherwise, null.
 	 */
 	public Long calc(String exp) {
@@ -29,7 +29,7 @@ public class Main {
 	
 	/**
 	 * Tokenize the input expression.
-	 * @input exp an expression
+	 * @param exp an expression
 	 * @return an array of tokens
 	 */
 	private String[] tokenize(String exp) {
@@ -103,8 +103,8 @@ public class Main {
 
 	/**
 	 * Log debug message.
-	 * @input state in which state the debug msg is produced
-	 * @input msg the debug msg
+	 * @param state in which state the debug msg is produced
+	 * @param msg the debug msg
 	 */
 	private static void debug(int state, String msg) {
 		CLogger.debug("state " + state + ": "+ msg);
