@@ -25,6 +25,7 @@ public class MainTest extends TestCase {
 
     public void testApp() {
 		assertTrue(3 == m.calc("add(1, 2)"));
+		assertTrue(-1 == m.calc("sub(1, 2)"));
 		assertTrue(6 == m.calc("mult(2, 3)"));
 		assertTrue(5 == m.calc("let(a, 5, a)"));
 		assertTrue(10 == m.calc("let(a, 5, add(a, a))"));
