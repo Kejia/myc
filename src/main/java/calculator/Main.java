@@ -2,7 +2,7 @@
 package calculator;
 
 import calculator.CLogger;
-//import calculator.CLogger;
+import calculator.UndefinedIdException;
 import calculator.SyntaxException;
 
 import java.util.ArrayList;
