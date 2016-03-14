@@ -14,6 +14,24 @@ import java.util.StringTokenizer;
 
 public class Main {
 
+	/**
+	 * Calculate an expression.
+	 * @input exp an expression
+	 * @return the result of the expression if it's legal; otherwise, null.
+	 */
+	public Long calc(String exp) {
+		CLogger.info("exp: " + exp + ".");
+		tokens = tokenize(exp);
+		CLogger.info("tokens: " + Arrays.deepToString(tokens) + ".");
+		counter = -1;
+		return processState0();
+	}
+	
+	/**
+	 * Tokenize the input expression.
+	 * @input exp an expression
+	 * @return an array of tokens
+	 */
 	private String[] tokenize(String exp) {
 		String[] r = null;
 		if (exp != null) {
@@ -30,27 +48,23 @@ public class Main {
 			int c = 0;
 			String token = null;
 			Random rand = new Random();
-			int scope = rand.nextInt(65536);
+			int scope = rand.nextInt(MAX_ID_NUM);
 			Stack<Integer> scopes = new Stack<Integer>();
-			Stack<String> par = new Stack<String>();
-			int i = -1;
+			int i = -1, z = 0;
 			HashSet<String> vars = new HashSet<String>();
 			while (st.hasMoreTokens()) {
 				i++;
 				token = st.nextToken().toLowerCase();
-				if (isLet(token)) {
-					scope = rand.nextInt(65536);
+				if (isLet(token)) {// new scope
+					scope = rand.nextInt(MAX_ID_NUM);
 					scopes.push(scope);
 				}
-				if (isLeft(token)) {
-					if (isLet(r[i - 1])) par.push("[");
-					else par.push("(");
+				if (isLeft(token) && !isLet(r[i - 1])) scopes.push(-2);
+				if (isRight(token)) {// return to the upper scope 
+					z = scopes.pop();
+					if (z > -1) scope = z;
 				}
-				if (isRight(token)) {
-					String z = par.pop();
-					if (z.equals("[")) scope = scopes.pop();
-				}
-				if (isVar(token)) {
+				if (isVar(token)) {// bind the correct id declared in the current scope
 					if(isLet(r[i - 2])) {
 						r[c] = "id_" + token + "_" + scope;
 						vars.add(r[c]);
@@ -70,16 +84,11 @@ public class Main {
 		return r;
 	}
 	
-	public Long calc(String exp) {
-		CLogger.info("exp: " + exp + ".");
-		tokens = tokenize(exp);
-		CLogger.info("tokens: " + Arrays.deepToString(tokens) + ".");
-		counter = -1;
-		return processState0();
-	}
+	private static HashMap<String, Long> ids = new HashMap<String, Long>(); // var id table
 
-	private static HashMap<String, Long> ids = new HashMap<String, Long>();
-	
+	private static int MAX_ID_NUM = 65536;
+
+	// keywords
 	private static String LET = "let";
 	private static String ADD = "add";
 	private static String SUB = "sub";
@@ -89,11 +98,14 @@ public class Main {
 	private static String RIGHT = ")";
 	private static String COMMA = ",";
 
-	private Stack<String> op = new Stack<String>();
-	
-	private static int counter = -1;
-	private static String[] tokens;
+	private static String[] tokens; // tokens of the expression
+	private static int counter = -1; // tokens visiting pointer
 
+	/**
+	 * Log debug message.
+	 * @input state in which state the debug msg is produced
+	 * @input msg the debug msg
+	 */
 	private static void debug(int state, String msg) {
 		CLogger.debug("state " + state + ": "+ msg);
 	}
@@ -155,10 +167,16 @@ public class Main {
 		return Long.parseLong(token);
 	}
 
+	/**
+	 * Test whether a token is a legal var. This method is used in tokenizing phase.
+	 */
 	private boolean isVar(String token) {
 		return token != null && token.matches("[a-zA-Z]+") && !isOperator(token) && !isLet(token);
 	}
 	
+	/**
+	 * Test whether a token is a legal var id.
+	 */
 	private boolean isId(String token) {
 		return token != null && token.matches("id_[a-zA-Z]+_[0-9]+") && !isOperator(token) && !isLet(token);
 	}
@@ -173,12 +191,12 @@ public class Main {
 		throw new RuntimeException("undefined id: " + id + ".");
 	}
 
-	private Long processExp() {
+	private Long processExp() {// process an expression
 		counter--;
 		return processState0();
 	}
 
-	private Long processState0() {
+	private Long processState0() {// process an expression
 		String token = nextToken();
 		debug(0, token);
 		if (isOperator(token)) return processState1(token);
@@ -187,7 +205,7 @@ public class Main {
 		return null;
 	}
 
-	private Long processState1(String operator) {
+	private Long processState1(String operator) {// process operators: add, sub, mult, and div.
 		
 		if (isLeft(nextToken())) {
 			debug(1, currentToken());
@@ -253,14 +271,12 @@ public class Main {
 	}
 
 	private Long processState5(String operator, String operandLeft, String operandRight) {
-		//		if (isRight(nextToken())) {
 		long left = toInt(operandLeft);
 		long right = toInt(operandRight);
 		if (isAdd(operator)) return new Long(left + right);
 		else if (isSub(operator)) return new Long(left - right);
 		else if (isMult(operator)) return new Long(left * right);
 		else if (isDiv(operator)) return new Long(left / right);
-		//		} else throwSyntaxError(currentToken(), ").");
 		return null;
 	}
 	
@@ -276,7 +292,7 @@ public class Main {
 		return null;
 	}
 	
-	private Long processState6() {
+	private Long processState6() {// process `let' declaration
 		if (isLeft(nextToken())) {
 			Long r = processState7();
 			debug(6, r.toString());
@@ -337,7 +353,10 @@ public class Main {
 		} else if  (args.length == 1) {
 			Long r = m.calc(args[0]);
 			CLogger.info("result: " + (r == null ? null : r.toString() + "."));
-		} else m.test();
+		} else {
+			m.test();
+			CLogger.info("usage:\n$ java calculator.Main [--verbosity VERB_LEVEL] exp\n\t- VERB_LEVEL: DEBUG, INFO, ERROR.");
+		}
 		CLogger.info("bye");
 	}
 
