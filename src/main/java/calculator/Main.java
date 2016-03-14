@@ -2,6 +2,8 @@
 package calculator;
 
 import calculator.CLogger;
+//import calculator.CLogger;
+import calculator.SyntaxException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,8 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
+
+	public Main() {}
 
 	/**
 	 * Calculate an expression.
@@ -183,17 +187,19 @@ public class Main {
 
 	private void throwSyntaxError(String unexpectedToken, String expectedToken) {
 		try {
-			throw new Exception("unexpected token " + unexpectedToken + "; expected: " + expectedToken);
-		} catch (Exception e) {
+			throw new SyntaxException("unexpected token " + unexpectedToken + "; expected: " + expectedToken);
+		} catch (SyntaxException e) {
 			CLogger.error("syntax error: expect " + expectedToken + ", but " + unexpectedToken + " encountered.");
+			CLogger.debug(e.traceStack());
 		}
 	}
 
 	private void throwUndefinedIdError(String id) {
 		try {
-			throw new Exception("undefined id: " + id + ".");
-		} catch (Exception e) {
+			throw new UndefinedIdException("undefined id: " + id + ".");
+		} catch (UndefinedIdException e) {
 			CLogger.error("undefined id: " + id);
+			CLogger.debug(e.traceStack());
 		}
 	}
 
