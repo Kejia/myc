@@ -1,0 +1,19 @@
+
+package calculator;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class CLogger {
+
+	private static Logger logger = Logger.getLogger("calculator_logger");
+
+	public static Logger getLogger() {
+		return logger;
+	}
+	
+	public static void setLevel(Level level) {
+		logger.setLevel(level);
+	}
+	
+}
