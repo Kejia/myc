@@ -1,3 +1,5 @@
-calculator/Main.class
-calculator/App.class
+calculator/UndefinedIdException.class
 calculator/CLogger.class
+calculator/CalculatorException.class
+calculator/SyntaxException.class
+calculator/Main.class
