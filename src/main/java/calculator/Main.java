@@ -182,13 +182,19 @@ public class Main {
 	}
 
 	private void throwSyntaxError(String unexpectedToken, String expectedToken) {
-		CLogger.error("syntax error: expect " + expectedToken + ", but " + unexpectedToken + " encountered.");
-		throw new RuntimeException("unexpected token " + unexpectedToken + "; expected: " + expectedToken);
+		try {
+			throw new Exception("unexpected token " + unexpectedToken + "; expected: " + expectedToken);
+		} catch (Exception e) {
+			CLogger.error("syntax error: expect " + expectedToken + ", but " + unexpectedToken + " encountered.");
+		}
 	}
 
 	private void throwUndefinedIdError(String id) {
-		CLogger.error("undefined id: " + id);
-		throw new RuntimeException("undefined id: " + id + ".");
+		try {
+			throw new Exception("undefined id: " + id + ".");
+		} catch (Exception e) {
+			CLogger.error("undefined id: " + id);
+		}
 	}
 
 	private Long processExp() {// process an expression
