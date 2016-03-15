@@ -235,16 +235,16 @@ public class Main {
 		debug(2, operator);
 		if (isInt(token)) {
 			Long r = processState3(operator, token);
-			debug(21, r.toString());
+			debug(21, r == null ? "NONE" : r.toString());
 			return r;
 		} else if (isId(token)) {
 			Long r = processState3d1(operator, token);
-			debug(22, r.toString());
+			debug(22, r == null ? "NONE" : r.toString());
 			return r;
 		} else if (isLet(token) || isOperator(token)) {
 			Long r = processExp();
-			debug(23, r.toString());
-			return processState3(operator, r.toString());
+			debug(23, r == null ? "NONE" : r.toString());
+			return processState3(operator, r == null ? "NONE" : r.toString());
 		}
 		else throwSyntaxError(token, "a legal expression.");
 		return null;
@@ -253,7 +253,7 @@ public class Main {
 	private Long processState3(String operator, String operand) {
 		if (isComma(nextToken())) {
 			Long r = processState4(operator, operand);
-			debug(3, r.toString());
+			debug(3, r == null ? "NONE" : r.toString());
 			return r;
 		} else throwSyntaxError(currentToken(), ",.");
 		return null;
@@ -261,7 +261,7 @@ public class Main {
 
 	private Long processState3d1(String operator, String idForOperandLeft) {
 		Long operandLeft = ids.get(idForOperandLeft);
-		debug(31, operandLeft.toString());
+		debug(31, operandLeft == null ? "NONE" : operandLeft.toString());
 		if (operandLeft != null) return processState3(operator, operandLeft.toString());
 		else throwUndefinedIdError(idForOperandLeft);
 		return null;
@@ -272,11 +272,11 @@ public class Main {
 		if (isInt(token)) return processState5(operator, operand, token);
 		else if (isId(token)) {
 			Long r = processState5d1(operator, operand, token);
-			debug(41, r.toString());
+			debug(41, r == null ? "NONE" : r.toString());
 			return r;
 		} else if (isLet(token) || isOperator(token)) {
 			Long r = processExp();
-			debug(42, r.toString());
+			debug(42, r == null ? "NONE" : r.toString());
 			return processState5(operator, operand, r.toString());
 		} else throwSyntaxError(token, "a legal expression.");
 		return null;
@@ -294,10 +294,10 @@ public class Main {
 	
 	private Long processState5d1(String operator, String operandLeft, String idForOperandRight) {
 		Long operandRight = ids.get(idForOperandRight);
-		debug(51, operandRight.toString());
+		debug(51, operandRight == null ? "NONE" : operandRight.toString());
 		if (operandRight != null) {
 			Long r = processState5(operator, operandLeft, operandRight.toString());
-			debug(52, r.toString());
+			debug(52, r == null ? "NONE" : r.toString());
 			return r;
 		}
 		throwUndefinedIdError(idForOperandRight);
@@ -307,7 +307,7 @@ public class Main {
 	private Long processState6() {// process `let' declaration
 		if (isLeft(nextToken())) {
 			Long r = processState7();
-			debug(6, r.toString());
+			debug(6, r == null ? "NONE" : r.toString());
 			if (isRight(nextToken())) return r;
 			else throwSyntaxError(currentToken(), ").");
 		} else throwSyntaxError(currentToken(), "(.");
@@ -361,10 +361,10 @@ public class Main {
 		String rs = null;
 		if (args.length == 3) {
 			Long r = m.calc(args[2]);
-			CLogger.info("result: " + (r == null ? null : r.toString() + "."));
+			CLogger.info("result: " + (r == null ? "NONE" : r.toString() + "."));
 		} else if  (args.length == 1) {
 			Long r = m.calc(args[0]);
-			CLogger.info("result: " + (r == null ? null : r.toString() + "."));
+			CLogger.info("result: " + (r == null ? "NONE" : r.toString() + "."));
 		} else {
 			m.test();
 			CLogger.info("usage:\n$ java calculator.Main [--verbosity VERB_LEVEL] exp\n\t- VERB_LEVEL: DEBUG, INFO, ERROR.");
