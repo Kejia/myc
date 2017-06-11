@@ -1,5 +1,6 @@
 # my-calculator
-a toy calculator
+
+a toy calculator designed with automata.
 
 # usage
 
